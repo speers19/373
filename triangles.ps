@@ -1,0 +1,87 @@
+%!
+
+
+/fill_triangle
+% x0 y0 x1 y1 x2 y2  fill_triangle -
+{
+   newpath
+   moveto
+   lineto
+   lineto
+   closepath
+   fill
+   stroke
+} def
+
+
+/nest
+% x0 y0 x1 y1 x2 y2 depth nest -
+{
+    {
+	1 copy
+	1 copy
+	colorchoose
+	0 eq {exit} if
+	7 1 roll
+	6 copy fill_triangle
+	3 2 roll
+	midpoint
+	6 5 roll
+	3 2 roll
+	midpoint
+	3 2 roll
+	5 4 roll
+	midpoint
+	3 1 roll
+	pop
+	pop
+	3 2 roll
+	pop
+	exch
+	3 1 roll
+	7 3 roll
+	midpoint
+	4 2 roll
+	midpoint
+	5 2 roll
+	3 2 roll
+	midpoint
+	6 1 roll
+	pop
+	pop
+	3 2 roll
+	pop
+	3 2 roll
+	7 4 roll
+	4 3 roll
+	exch
+	6 2 roll
+	3 2 roll
+	exch
+	6 4 roll
+	7 6 roll
+	1 sub
+    } loop
+
+} def
+
+/midpoint
+% n0 n1
+{
+
+2 copy
+add 2 div
+
+} def
+
+/colorchoose
+% depth
+{
+2 mod 0 eq {1 1 0 setrgbcolor} {0 0 1 setrgbcolor} ifelse
+} def
+
+0 1 0 setrgbcolor
+200 300   400 350   350 600   9   nest
+
+
+showpage

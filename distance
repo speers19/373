@@ -1,0 +1,6 @@
+(define (distance x1 x2 y1 y2)
+	(sqrt(+ (square (- x2 x1)) (square (- y2 y1)) ))
+)
+
+(distance 2 5 3 7)
+(distance 8 12 2 11)

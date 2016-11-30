@@ -1,0 +1,189 @@
+%!
+
+/koch
+% x0 y0 x1 y1   n   koch -
+%Should draw children from x0 y0 to bx0 by0, bx0 by0 to cx cy, cx cy to bx1 by1, and bx1 by1 to x1 y1
+{
+
+	dup 
+	0 gt
+	{
+		5 1 roll  % n x0 y0 x1 y1
+		4 copy    % n   x0 y0 x1 y1   x0 y0 x1 y1
+		ridgeprep % n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy
+		
+
+		9 index 9 index % n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy  x0 y0
+		7 index 7 index % n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy  x0 y0  bx0 by0
+		14 index
+		1 sub % n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy               x0 y0  bx0 by0  n-1
+		koch
+
+		
+		
+
+		%n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy
+
+		5 index 5 index  %n   x0 y0 x1 y1   bx0 by0 bx1 by1     cx cy        bx0 by0
+		3 index 3 index  %n   x0 y0 x1 y1   bx0 by0 bx1 by1     cx cy        bx0 by0  cx cy
+		14 index
+		1 sub
+		koch
+
+
+
+		%n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy
+
+		1 index 1 index     %n   x0 y0 x1 y1   bx0 by0 bx1 by1  cx cy     cx cy
+		5 index 5 index     %n   x0 y0 x1 y1   bx0 by0 bx1 by1  cx cy     cx cy    bx1 by1
+		14 index
+		1 sub
+		koch
+
+
+
+		%n   x0 y0 x1 y1   bx0 by0 bx1 by1   cx cy
+
+		3 index 3 index    %n   x0 y0 x1 y1   bx0 by0 bx1 by1  cx cy     bx1 by1
+		9 index 9 index	   %n   x0 y0 x1 y1   bx0 by0 bx1 by1  cx cy     bx1 by1   x1 y1
+		14 index
+		1 sub
+		koch
+
+		
+
+
+		pop pop pop pop pop pop pop pop pop pop pop
+
+	} 
+	{
+		pop
+		line
+	} 
+	ifelse
+
+
+} def
+
+
+
+
+/line
+% x0 y0 x1 y1 line -
+{
+	newpath
+	moveto
+	lineto
+	closepath
+	stroke
+} def
+
+/ridge
+% bx0 by0  bx1 by1  cx cy  ridge -
+{
+	4 copy
+   	line
+   	4 2 roll
+   	pop pop
+   	line
+} def
+
+/ridgeprep
+% x0 y0 x1 y1
+% returns bx0 by0 bx1 by1 cx cy
+{
+    4 copy
+    dist    	  	   % x0 y0 x1 y1 totaldistance
+    1 index		   % x0 y0 x1 y1 totaldistance y1
+    4 index		   % x0 y0 x1 y1 totaldistance y1 y0
+    sub		  	   % x0 y0 x1 y1 totaldistance ydistance
+    3 index		   % x0 y0 x1 y1 totaldistance ydistance x1
+    6 index		   % x0 y0 x1 y1 totaldistance ydistance x1 x0
+    sub 	           % x0 y0 x1 y1 totaldistance ydistance xdistance
+    atan 		   % x0 y0 x1 y1 totaldistance a
+    exch		   % x0 y0 x1 y1 a totaldistance
+    dup 3 div              % x0 y0 x1 y1 a totaldistance totaldistance/3
+    dup    		   % x0 y0 x1 y1 a totaldistance totaldistance/3 totaldistance/3
+    3 index cos mul	   % x0 y0 x1 y1 a totaldistance totaldistance/3 bxdistance
+    exch
+    3 index sin mul	   % x0 y0 x1 y1 a totaldistance bxdistance bydistance
+    dup
+    7 index add	   % x0 y0 x1 y1 a totaldistance bxdistance bydistance by0
+    2 index 9 index add % x0 y0 x1 y1 a totaldistance bxdistance bydistance by0 bx0
+    dup
+    4 index add % x0 y0 x1 y1 a totaldistance bxdistance bydistance by0 bx0 bx1
+    2 index 4 index add % x0 y0 x1 y1 a totaldistance bxdistance bydistance by0 bx0 bx1 by1
+    12 8 roll		%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1
+   	4 copy midpoint	%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 my mx
+   	exch			%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 mx my
+    2 index 5 index sub	 %  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 mx my ydistance
+    4 index 7 index sub	%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 mx my ydistance xdistance
+    exch		%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 mx my xdistance ydistance
+    14 index 		%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 mx my xdistance ydistance totaldistance
+    equilc		%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 x0 y0 x1 y1 cx cy
+    6 2 roll   	%  a totaldistance bxdistance bydistance by0 bx0 bx1 by1 cx cy x0 y0 x1 y1 
+    14 10 roll	%  by0 bx0 bx1 by1 cx cy x0 y0 x1 y1 a totaldistance bxdistance bydistance 
+    pop pop pop pop pop pop pop pop %  by0 bx0 bx1 by1 cx cy 
+    6 2 roll %  cx cy by0 bx0 bx1 by1 
+    4 2 roll
+    exch
+    4 2 roll
+    6 4 roll 	   % bx0 by0 bx1 by1 cx cy
+    
+} def
+
+/equilc
+% mx my xdistance ydistance totaldistance
+% returns cx cy
+{
+	5 1 roll	% totaldistance mx my xdistance ydistance
+	
+	3 index 1 index sub % totaldistance mx my xdistance ydistance x3
+	3 index 3 index add % totaldistance mx my xdistance ydistance x3 y3
+	dup					% totaldistance mx my xdistance ydistance x3 y3 y3
+	5 index
+	sub % totaldistance mx my xdistance ydistance x3 y3 y3distance
+	2 index 7 index sub atan % totaldistance mx my xdistance ydistance x3 y3 newa
+	7 index 3 div % totaldistance mx my xdistance ydistance x3 y3 newa totaldistance/3
+	dup			  % totaldistance mx my xdistance ydistance x3 y3 newa totaldistance/3 totaldistance/3
+	2 index cos mul % totaldistance mx my xdistance ydistance x3 y3 newa totaldistance/3 cxdistance
+	exch			% totaldistance mx my xdistance ydistance x3 y3 newa cxdistance totaldistance/3 
+	2 index sin mul % totaldistance mx my xdistance ydistance x3 y3 newa cxdistance cydistance
+	7 index add 	% totaldistance mx my xdistance ydistance x3 y3 newa cxdistance cy
+	exch 			% totaldistance mx my xdistance ydistance x3 y3 newa cy cxdistance
+	8 index add		% totaldistance mx my xdistance ydistance x3 y3 newa cy cx
+	exch
+	10 2 roll
+	pop pop pop pop pop pop pop pop
+
+} def
+
+/dist
+% x0 y0 x1 y1 - 
+{
+	3 2 roll 
+	exch        %     this and above puts x0 y0 x1 y1 into x0 x1 y0 y1
+	sub dup mul % x0 x
+	3 1 roll
+	sub dup mul
+	add
+	sqrt
+} def
+
+/midpoint
+% x0 y0 x1 y1 
+%returns mx my
+{
+	2 index % x0 y0 x1 y1 y0
+	add 2 div % x0 y0 x1 my
+	3 index 2 index % x0 y0 x1 my x0 x1
+	add 2 div % x0 y0 x1 my mx
+	5 2 roll 
+	exch
+	pop pop pop
+} def
+
+
+50 500   500 400  3 koch
+
+showpage

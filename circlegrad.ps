@@ -1,0 +1,158 @@
+%!
+
+/red 0 def
+/orange {1 12 div} def
+/yellow {1 6 div} def
+/green {1 3 div} def
+/blue {2 3 div} def
+/violet .78357 def
+
+/circle
+% x0 y0 radius
+{
+  -180 180 arc
+  stroke
+} def
+
+/rainbowcircle
+%x0 y0 radius saturation
+{
+
+    /saturation exch def
+    /radius exch def
+    /y0 exch def
+    /x0 exch def
+    
+    red saturation 1 sethsbcolor
+    x0 y0 radius 0 60 arc
+    stroke
+    
+    orange saturation 1 sethsbcolor 
+    x0 y0 radius 60 120 arc
+    stroke
+    
+    yellow saturation 1 sethsbcolor 
+    x0 y0 radius 120 180 arc
+    stroke
+     
+    green saturation 1 sethsbcolor
+    x0 y0 radius 180 240 arc
+    stroke
+
+    blue saturation 1 sethsbcolor
+    x0 y0 radius 240 300 arc
+    stroke
+    
+    violet saturation 1 sethsbcolor
+    x0 y0 radius 300 360 arc
+    stroke
+    
+} def
+
+/blendcircle
+%x0 y0 radius saturation
+{
+
+    /saturation exch def
+    /radius exch def
+    /y0 exch def
+    /x0 exch def
+    /a 0 def
+    /b 1 def
+    /inc 1 360 div def
+
+    {
+	b 361 ge {exit} if
+	inc saturation 1 sethsbcolor
+	x0 y0 radius a b arc
+	stroke
+	/a a 1 add def
+	/b b 1 add def
+	/inc 1 360 div inc add def
+    }
+    loop
+    
+} def
+
+/circlegrad
+% color x0 y0 radius interval
+{
+    dup
+    1
+    exch
+    sub
+    0 ge {
+	5 -1 roll % x0 y0 radius interval color
+	/color exch def
+	4 1 roll % interval x0 y0 radius
+	3 copy circle %interval x0 y0 radius
+	color %interval x0 y0 radius hue 
+	1 5 index sub %interval x0 y0 radius hue saturation 
+	1 %interval x0 y0 radius hue saturation brightness
+	sethsbcolor %interval x0 y0 radius
+	1 sub %interval x0 y0 newradius
+	4 -1 roll %x0 y0 newradius interval
+	.01 add %x0 y0 newradius newinterval		this is how the interval changes
+	color %x0 y0 newradius newinterval color
+	5 1 roll %color x0 y0 newradius newinterval
+	circlegrad 
+    } if
+
+} def
+
+/rainbowcirclegrad
+% x0 y0 radius interval
+{
+    dup
+    1
+    exch
+    sub
+    0 ge {
+	dup %x0 y0 radius interval interval
+	1 exch sub %x0 y0 radius interval saturation
+	exch %x0 y0 radius saturation interval
+	5 1 roll % interval x0 y0 radius saturation
+	4 copy rainbowcircle %interval x0 y0 radius saturation
+	pop %interval x0 y0 radius
+	1 sub %interval x0 y0 newradius
+	4 -1 roll %x0 y0 newradius interval
+	.01 add %x0 y0 newradius newinterval		this is how the interval changes
+	rainbowcirclegrad 
+    } if
+
+} def
+
+/blendcirclegrad
+%x0 y0 radius interval
+{
+    dup
+    1
+    exch
+    sub
+    0 ge {
+	dup %x0 y0 radius interval interval
+	1 exch sub %x0 y0 radius interval saturation
+	exch %x0 y0 radius saturation interval
+	5 1 roll % interval x0 y0 radius saturation
+	4 copy blendcircle %interval x0 y0 radius saturation
+	pop %interval x0 y0 radius
+	1 sub %interval x0 y0 newradius
+	4 -1 roll %x0 y0 newradius interval
+	.01 add %x0 y0 newradius newinterval		this is how the interval changes
+	blendcirclegrad 
+    } if
+
+} def
+
+1 1 1 setrgbcolor
+red 144 536 72 .3 circlegrad
+orange 306 536 72 .3 circlegrad
+yellow 468 536 72 .3 circlegrad
+
+153 392 72 .3 rainbowcirclegrad
+459 392 72 .3 blendcirclegrad
+
+green 144 248 72 .3 circlegrad
+blue 306 248 72 .3 circlegrad
+violet 468 248 72 .3 circlegrad
+
